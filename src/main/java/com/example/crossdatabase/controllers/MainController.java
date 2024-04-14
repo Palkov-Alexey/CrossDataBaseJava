@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.stereotype.Controller;
 
 import com.example.crossdatabase.models.dao.DataBaseModel;
@@ -66,6 +67,7 @@ public class MainController {
     public void initialize() {
         try {
             var engines = dbSettingService.getEngines();
+            var rootItem = new TreeItem<String>("Servers");
 
             for (var engine : engines) {
                 var schems = engine.getSchema();
@@ -102,8 +104,10 @@ public class MainController {
                     }
                 }
 
-                dbList.setRoot(serverItem);
+                rootItem.getChildren().add(serverItem);
             }
+            
+            dbList.setRoot(rootItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
