@@ -6,9 +6,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.stereotype.Controller;
 
+import com.example.crossdatabase.helpers.IconHelper;
 import com.example.crossdatabase.models.dao.DataBaseModel;
 import com.example.crossdatabase.sevices.DbSettingService;
 
@@ -71,7 +71,7 @@ public class MainController {
 
             for (var engine : engines) {
                 var schems = engine.getSchema();
-                var serverItem = new TreeItem<String>(engine.getName());
+                var serverItem = new TreeItem<String>(engine.getName(), IconHelper.getPostgreSqlImage());
 
                 if (schems.size() > 0) {
                     Set<Entry<String, List<DataBaseModel>>> catalogsGroups = schems.stream()

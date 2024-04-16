@@ -26,6 +26,7 @@ public class PostgresEngine implements ISqlEngine {
         return setting.getName();
     }
 
+    @SuppressWarnings("null")
     private List<String> getDataBases() throws Exception {
         try {
             List<String> result = new ArrayList<String>();
@@ -42,6 +43,7 @@ public class PostgresEngine implements ISqlEngine {
         }
     }
 
+    @SuppressWarnings("null")
     public List<DataBaseModel> getSchema() throws Exception {
         try {
             List<DataBaseModel> result = new ArrayList<DataBaseModel>();
@@ -56,8 +58,6 @@ public class PostgresEngine implements ISqlEngine {
                 result.addAll(resultQuery);
                 template.getDataSource().getConnection().close();
             }
-
-            template.getDataSource().getConnection().close();
 
             return result;
         } catch (Exception e) {

@@ -37,6 +37,29 @@
     </distributionManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc_auth</artifactId>
+            <version>12.6.1.x64</version>
+            <type>dll</type>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.7.1</version>
+            <type>maven-plugin</type>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-transcoder</artifactId>
+            <version>1.17</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -175,8 +198,49 @@
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
+
         <plugins>
-            <!-- <plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/dll</outputDirectory>
+                            <includeArtifactIds>mssql-jdbc_auth</includeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/resources/assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                            <outputDirectory>${project.build.directory}/distr</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
                 <version>2.5.0</version>
@@ -187,9 +251,9 @@
                         <goals><goal>launch4j</goal></goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <outfile>target/BarCodesFX.exe</outfile>
-                            <jar>barCodesFX.jar</jar>
-                            <icon>src/main/resources/microQR.ico</icon>
+                            <outfile>target/CrossDB.exe</outfile>
+                            <jar>CrossDB.jar</jar>
+                            <!-- <icon>src/main/resources/microQR.ico</icon> -->
                             <downloadUrl>https://download.oracle.com/java/21/archive/jdk-21.0.2_windows-x64_bin.msi</downloadUrl>
                             <errTitle>Launching error</errTitle>
                             <dontWrapJar>true</dontWrapJar>
@@ -220,10 +284,15 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin> -->
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                      -Djava.library.path=${project.build.directory}/dll
+                    </jvmArguments>
+                  </configuration>
             </plugin>
         </plugins>
     </build>
