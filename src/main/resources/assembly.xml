@@ -33,7 +33,7 @@
             <outputDirectory>/</outputDirectory>
         </file> -->
         <file>
-            <source>${project.build.directory}/CrossDB.exe</source>
+            <source>${project.build.directory}/CrossDataBase.exe</source>
             <outputDirectory>/</outputDirectory>
         </file>
     </files>

@@ -195,6 +195,11 @@
             <artifactId>liquibase-core</artifactId>
             <version>4.26.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -251,33 +256,33 @@
                         <goals><goal>launch4j</goal></goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <outfile>target/CrossDB.exe</outfile>
-                            <jar>CrossDB.jar</jar>
+                            <outfile>target/CrossDataBase.exe</outfile>
+                            <jar>CrossDataBase.jar</jar>
                             <!-- <icon>src/main/resources/microQR.ico</icon> -->
                             <downloadUrl>https://download.oracle.com/java/21/archive/jdk-21.0.2_windows-x64_bin.msi</downloadUrl>
                             <errTitle>Launching error</errTitle>
                             <dontWrapJar>true</dontWrapJar>
                             <jre>
-                                <path>%PWD%/jre</path>
-                                <jdkPreference>preferJdk</jdkPreference>
+                                <path>../jre</path>
+                                <requiresJdk>false</requiresJdk>
                                 <initialHeapPercent>20</initialHeapPercent>
                                 <maxHeapPercent>80</maxHeapPercent>
                             </jre>
                             <versionInfo>
                                 <fileVersion>0.0.0.0</fileVersion>
-                                <txtFileVersion>${version}</txtFileVersion>
-                                <fileDescription>CrossDB-${version}</fileDescription>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>CrossDataBase-${project.version}</fileDescription>
                                 <copyright>Palkov Alexey</copyright>
                                 <productVersion>0.0.0.0</productVersion>
-                                <txtProductVersion>${version}</txtProductVersion>
-                                <productName>CrossDB</productName>
-                                <internalName>CrossDB</internalName>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <productName>CrossDataBase</productName>
+                                <internalName>CrossDataBase</internalName>
 
-                                <originalFilename>CrossDB.exe</originalFilename>
+                                <originalFilename>CrossDataBase.exe</originalFilename>
                             </versionInfo>
                             <messages>
                                 <startupErr>Startup error</startupErr>
-                                <bundledJreErr>Bundled Jre Error</bundledJreErr>
+                                <jreNotFoundErr>Bundled Jre Error</jreNotFoundErr>
                                 <jreVersionErr>Jre Version Error</jreVersionErr>
                                 <launcherErr>Launcher Error</launcherErr>
                             </messages>
