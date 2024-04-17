@@ -1,6 +1,8 @@
 package com.example.crossdatabase.application;
 
 import com.example.crossdatabase.Main;
+import com.example.crossdatabase.events.StageReadyEvent;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;

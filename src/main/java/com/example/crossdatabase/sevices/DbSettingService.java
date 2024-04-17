@@ -4,10 +4,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.*;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.example.crossdatabase.data_access.infrastructure.MsSqlEngine;
 import com.example.crossdatabase.data_access.infrastructure.PostgresEngine;
+import com.example.crossdatabase.events.SqlEngineEvent;
 import com.example.crossdatabase.interfaces.ISqlEngine;
 import com.example.crossdatabase.models.DbSettingModel;
 import com.example.crossdatabase.models.converters.DbSettingConverter;
@@ -20,17 +22,21 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import jakarta.annotation.PostConstruct;
+import kotlin.NotImplementedError;
 
 @Service
 public class DbSettingService {
+    private ConfigurableApplicationContext context;
     static final Logger logger = LogManager.getLogger(PropService.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private final DbSettingRepo dbSettingRepo;
     private final DbSettingConverter converter;
 
-    public DbSettingService(DbSettingRepo dbSettingRepo, DbSettingConverter converter) {
+    public DbSettingService(DbSettingRepo dbSettingRepo, DbSettingConverter converter,
+            ConfigurableApplicationContext context) {
         this.dbSettingRepo = dbSettingRepo;
         this.converter = converter;
+        this.context = context;
     }
 
     @PostConstruct
@@ -53,15 +59,30 @@ public class DbSettingService {
             return;
         }
 
-        dbSettingRepo.save(converter.toEntity(setting));
+        var result = dbSettingRepo.save(converter.toEntity(setting));
+
+        context.publishEvent(new SqlEngineEvent(getEngine(result.getId())));
     }
 
-    public Set<DbSettingModel> getSettingById(Long id) {
+    public DbSettingModel getSettingById(Long id) {
         return dbSettingRepo
                 .findById(id)
                 .stream()
                 .map(converter::toModel)
-                .collect(Collectors.toSet());
+                .findFirst().get();
+    }
+
+    public ISqlEngine getEngine(Long id) {
+        var setting = getSettingById(id);
+
+        switch (setting.getDbType()) {
+            case MsSql:
+                return new MsSqlEngine(setting);
+            case Postgres:
+                return new PostgresEngine(setting);
+            default:
+                throw new NotImplementedError();
+        }
     }
 
     public Set<ISqlEngine> getEngines() {

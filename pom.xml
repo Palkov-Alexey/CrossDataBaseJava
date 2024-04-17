@@ -13,6 +13,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>CrossDataBase</name>
     <description>CrossDataBase</description>
+    <inceptionYear>2024</inceptionYear>
+    <organization>
+        <name>palkov</name>
+    </organization>
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,23 +41,18 @@
     </distributionManagement>
 
     <dependencies>
-
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc_auth</artifactId>
-            <version>12.6.1.x64</version>
+            <version>12.6.0.x64</version>
             <type>dll</type>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
             <version>3.7.1</version>
             <type>maven-plugin</type>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
@@ -204,6 +203,7 @@
 
     <build>
         <finalName>${project.name}</finalName>
+        <directory>${project.basedir}/target</directory>
 
         <plugins>
             <plugin>
@@ -258,15 +258,18 @@
                             <headerType>gui</headerType>
                             <outfile>target/CrossDataBase.exe</outfile>
                             <jar>CrossDataBase.jar</jar>
-                            <!-- <icon>src/main/resources/microQR.ico</icon> -->
+                            <icon>src/main/resources/icon/icon.ico</icon>
                             <downloadUrl>https://download.oracle.com/java/21/archive/jdk-21.0.2_windows-x64_bin.msi</downloadUrl>
                             <errTitle>Launching error</errTitle>
                             <dontWrapJar>true</dontWrapJar>
                             <jre>
-                                <path>../jre</path>
+                                <path>%JAVA_HOME%</path>
                                 <requiresJdk>false</requiresJdk>
                                 <initialHeapPercent>20</initialHeapPercent>
                                 <maxHeapPercent>80</maxHeapPercent>
+                                <opts>
+                                    <opt>-Djava.library.path="%EXEDIR%\\dll\\"</opt>
+                                </opts>
                             </jre>
                             <versionInfo>
                                 <fileVersion>0.0.0.0</fileVersion>

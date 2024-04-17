@@ -1,4 +1,4 @@
-package com.example.crossdatabase.application;
+package com.example.crossdatabase.events;
 
 import javafx.stage.Stage;
 import org.springframework.context.ApplicationEvent;

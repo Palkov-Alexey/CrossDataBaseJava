@@ -6,8 +6,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
+import com.example.crossdatabase.events.SqlEngineEvent;
 import com.example.crossdatabase.helpers.IconHelper;
 import com.example.crossdatabase.models.dao.DataBaseModel;
 import com.example.crossdatabase.sevices.DbSettingService;
@@ -25,7 +28,7 @@ import net.rgielen.fxweaver.core.FxmlView;
 
 @Controller
 @FxmlView("/views/MainWindow.fxml")
-public class MainController {
+public class MainController implements ApplicationListener<SqlEngineEvent> {
     private final FxControllerAndView<ConnectController, AnchorPane> connectWindow;
     private final DbSettingService dbSettingService;
 
@@ -106,10 +109,54 @@ public class MainController {
 
                 rootItem.getChildren().add(serverItem);
             }
-            
+
             dbList.setRoot(rootItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void onApplicationEvent(SqlEngineEvent event) {
+        var engine = event.stage;
+        try {
+            var schems = engine.getSchema();
+            var serverItem = new TreeItem<String>(engine.getName(), IconHelper.getPostgreSqlImage());
+
+            if (schems.size() > 0) {
+                Set<Entry<String, List<DataBaseModel>>> catalogsGroups = schems.stream()
+                        .collect(Collectors.groupingBy(DataBaseModel::getTableCatalog,
+                                () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
+                                Collectors.toList()))
+                        .entrySet();
+
+                for (var catalog : catalogsGroups) {
+                    var catalogItem = new TreeItem<String>(catalog.getKey());
+
+                    Set<Entry<String, List<String>>> schemaGroups = catalog.getValue().stream()
+                            .collect(Collectors.groupingBy(x -> x.getTableSchema(),
+                                    () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
+                                    Collectors.mapping(x -> x.getTableName(), Collectors.toList())))
+                            .entrySet();
+
+                    for (var group : schemaGroups) {
+                        var schemaItem = new TreeItem<String>(group.getKey());
+                        var tables = group.getValue().stream().sorted(String.CASE_INSENSITIVE_ORDER).toList();
+
+                        for (var table : tables) {
+                            schemaItem.getChildren().add(new TreeItem<String>(table));
+                        }
+
+                        catalogItem.getChildren().add(schemaItem);
+                    }
+
+                    serverItem.getChildren().add(catalogItem);
+                }
+            }
+
+            dbList.getRoot().getChildren().add(serverItem);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 }
