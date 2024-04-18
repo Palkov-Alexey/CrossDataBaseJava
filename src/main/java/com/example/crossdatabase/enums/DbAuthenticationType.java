@@ -8,7 +8,7 @@ public enum DbAuthenticationType {
     @DbTypes(types = {DbType.MsSql})
     WindowsCredentials,
 
-    @Description("User & Password")
+    @Description("Login & Password")
     @DbTypes(types = {DbType.MsSql, DbType.Postgres})
-    UserAndPassword
+    LoginAndPassword
 }

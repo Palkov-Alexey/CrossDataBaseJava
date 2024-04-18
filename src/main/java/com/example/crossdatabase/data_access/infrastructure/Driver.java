@@ -16,7 +16,7 @@ public class Driver {
         dataSource.setUrl(catalog == null ? setting.getUrl() : getUrl(setting, catalog));
         dataSource.setCatalog(getCatalog(setting.getDbType()));
 
-        if (setting.getAuthType() == DbAuthenticationType.UserAndPassword) {
+        if (setting.getAuthType() == DbAuthenticationType.LoginAndPassword) {
             dataSource.setUsername(setting.getLogin());
             dataSource.setPassword(setting.getPassword());
         }

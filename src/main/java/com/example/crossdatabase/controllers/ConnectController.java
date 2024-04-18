@@ -76,6 +76,7 @@ public class ConnectController {
     }
 
     protected void getAuthTypes(DbType type) throws Exception {
+        type.toString();
         var allAuthTypes = DbAuthenticationType.values();
         var authTypes = new ArrayList<DbAuthenticationType>();
 
@@ -97,7 +98,7 @@ public class ConnectController {
 
     @FXML
     protected void selectAuthType() {
-        loginAndPassBlock.setVisible(authType.getValue() == DbAuthenticationType.UserAndPassword);
+        loginAndPassBlock.setVisible(authType.getValue() == DbAuthenticationType.LoginAndPassword);
     }
 
     @FXML

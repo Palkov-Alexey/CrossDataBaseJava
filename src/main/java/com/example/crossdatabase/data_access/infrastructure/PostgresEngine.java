@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.example.crossdatabase.enums.DbType;
 import com.example.crossdatabase.interfaces.ISqlEngine;
 import com.example.crossdatabase.models.DbSettingModel;
 import com.example.crossdatabase.models.dao.DataBaseModel;
@@ -26,12 +27,17 @@ public class PostgresEngine implements ISqlEngine {
         return setting.getName();
     }
 
-    @SuppressWarnings("null")
+    public DbType getType() {
+        return DbType.Postgres;
+    }
+
     private List<String> getDataBases() throws Exception {
         try {
             List<String> result = new ArrayList<String>();
-            List<String> resultQuery = template.queryForList("select datname from pg_database where datistemplate = false and datname not like '%template%' order by lower(datname);", String.class);
-            
+            List<String> resultQuery = template.queryForList(
+                    "select datname from pg_database where datistemplate = false and datname not like '%template%' order by lower(datname);",
+                    String.class);
+
             for (var res : resultQuery) {
                 result.add(res);
             }
@@ -43,11 +49,10 @@ public class PostgresEngine implements ISqlEngine {
         }
     }
 
-    @SuppressWarnings("null")
     public List<DataBaseModel> getSchema() throws Exception {
         try {
             List<DataBaseModel> result = new ArrayList<DataBaseModel>();
-            
+
             for (var database : getDataBases()) {
                 logger.info(database);
                 template = Driver.getTemplate(setting, database);

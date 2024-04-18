@@ -7,11 +7,11 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
 import com.example.crossdatabase.events.SqlEngineEvent;
 import com.example.crossdatabase.helpers.IconHelper;
+import com.example.crossdatabase.interfaces.ISqlEngine;
 import com.example.crossdatabase.models.dao.DataBaseModel;
 import com.example.crossdatabase.sevices.DbSettingService;
 
@@ -44,7 +44,7 @@ public class MainController implements ApplicationListener<SqlEngineEvent> {
     private TabPane tabs;
 
     @FXML
-    private TreeView<String> dbList;
+    private TreeView<Object> dbList;
 
     @FXML
     protected void addTab() {
@@ -68,60 +68,25 @@ public class MainController implements ApplicationListener<SqlEngineEvent> {
 
     @FXML
     public void initialize() {
-        try {
-            var engines = dbSettingService.getEngines();
-            var rootItem = new TreeItem<String>("Servers");
+        var rootItem = new TreeItem<Object>("Servers");
+        dbList.setRoot(rootItem);
+        var engines = dbSettingService.getEngines();
 
-            for (var engine : engines) {
-                var schems = engine.getSchema();
-                var serverItem = new TreeItem<String>(engine.getName(), IconHelper.getPostgreSqlImage());
-
-                if (schems.size() > 0) {
-                    Set<Entry<String, List<DataBaseModel>>> catalogsGroups = schems.stream()
-                            .collect(Collectors.groupingBy(DataBaseModel::getTableCatalog,
-                                    () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
-                                    Collectors.toList()))
-                            .entrySet();
-
-                    for (var catalog : catalogsGroups) {
-                        var catalogItem = new TreeItem<String>(catalog.getKey());
-
-                        Set<Entry<String, List<String>>> schemaGroups = catalog.getValue().stream()
-                                .collect(Collectors.groupingBy(x -> x.getTableSchema(),
-                                        () -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
-                                        Collectors.mapping(x -> x.getTableName(), Collectors.toList())))
-                                .entrySet();
-
-                        for (var group : schemaGroups) {
-                            var schemaItem = new TreeItem<String>(group.getKey());
-                            var tables = group.getValue().stream().sorted(String.CASE_INSENSITIVE_ORDER).toList();
-
-                            for (var table : tables) {
-                                schemaItem.getChildren().add(new TreeItem<String>(table));
-                            }
-
-                            catalogItem.getChildren().add(schemaItem);
-                        }
-
-                        serverItem.getChildren().add(catalogItem);
-                    }
-                }
-
-                rootItem.getChildren().add(serverItem);
-            }
-
-            dbList.setRoot(rootItem);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        for (var engine : engines) {
+            buildServerList(engine);
         }
     }
 
     @Override
     public void onApplicationEvent(SqlEngineEvent event) {
         var engine = event.stage;
+        buildServerList(engine);
+    }
+
+    private void buildServerList(ISqlEngine engine) {
         try {
             var schems = engine.getSchema();
-            var serverItem = new TreeItem<String>(engine.getName(), IconHelper.getPostgreSqlImage());
+            var serverItem = new TreeItem<Object>(engine, IconHelper.getPostgreSqlImage());
 
             if (schems.size() > 0) {
                 Set<Entry<String, List<DataBaseModel>>> catalogsGroups = schems.stream()
@@ -131,7 +96,7 @@ public class MainController implements ApplicationListener<SqlEngineEvent> {
                         .entrySet();
 
                 for (var catalog : catalogsGroups) {
-                    var catalogItem = new TreeItem<String>(catalog.getKey());
+                    var catalogItem = new TreeItem<Object>(catalog.getKey());
 
                     Set<Entry<String, List<String>>> schemaGroups = catalog.getValue().stream()
                             .collect(Collectors.groupingBy(x -> x.getTableSchema(),
@@ -140,11 +105,11 @@ public class MainController implements ApplicationListener<SqlEngineEvent> {
                             .entrySet();
 
                     for (var group : schemaGroups) {
-                        var schemaItem = new TreeItem<String>(group.getKey());
+                        var schemaItem = new TreeItem<Object>(group.getKey());
                         var tables = group.getValue().stream().sorted(String.CASE_INSENSITIVE_ORDER).toList();
 
                         for (var table : tables) {
-                            schemaItem.getChildren().add(new TreeItem<String>(table));
+                            schemaItem.getChildren().add(new TreeItem<Object>(table));
                         }
 
                         catalogItem.getChildren().add(schemaItem);

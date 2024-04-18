@@ -9,6 +9,7 @@ import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import com.example.crossdatabase.enums.DbType;
 import com.example.crossdatabase.interfaces.ISqlEngine;
 import com.example.crossdatabase.models.DbSettingModel;
 import com.example.crossdatabase.models.dao.DataBaseModel;
@@ -23,8 +24,17 @@ public class MsSqlEngine implements ISqlEngine {
         template = Driver.getTemplate(setting, null);
     }
 
+    @Override
+    public String toString() {
+        return setting.getName();
+    }
+
     public String getName() {
         return setting.getName();
+    }
+
+    public DbType getType() {
+        return DbType.MsSql;
     }
 
     private List<String> getDataBases() throws Exception {

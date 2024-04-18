@@ -251,6 +251,7 @@
                 <version>2.5.0</version>
                 <executions>
                     <execution>
+                        <?m2e execute onConfiguration,onIncremental?>
                         <id>l4j-clui</id>
                         <phase>compile</phase>
                         <goals><goal>launch4j</goal></goals>
