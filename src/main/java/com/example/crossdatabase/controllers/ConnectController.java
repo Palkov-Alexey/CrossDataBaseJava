@@ -6,6 +6,8 @@ import com.example.crossdatabase.data_access.infrastructure.Driver;
 import com.example.crossdatabase.enums.*;
 import com.example.crossdatabase.helpers.AnnotationHelper;
 import com.example.crossdatabase.models.DbSettingModel;
+import com.example.crossdatabase.models.controllers.DbAuthDto;
+import com.example.crossdatabase.models.controllers.DbTypeDto;
 import com.example.crossdatabase.sevices.DbSettingService;
 
 import javafx.collections.FXCollections;
@@ -38,10 +40,10 @@ public class ConnectController {
     GridPane loginAndPassBlock;
 
     @FXML
-    ChoiceBox<DbType> dbType;
+    ChoiceBox<DbTypeDto> dbType;
 
     @FXML
-    ChoiceBox<DbAuthenticationType> authType;
+    ChoiceBox<DbAuthDto> authType;
 
     @FXML
     TextField name;
@@ -72,25 +74,26 @@ public class ConnectController {
     @FXML
     protected void selectBaseType() throws Exception {
         var type = dbType.getValue();
-        getAuthTypes(type);
+        getAuthTypes(type.getType());
     }
 
     protected void getAuthTypes(DbType type) throws Exception {
         type.toString();
         var allAuthTypes = DbAuthenticationType.values();
-        var authTypes = new ArrayList<DbAuthenticationType>();
+        var authTypes = new ArrayList<DbAuthDto>();
 
         for (var allAuthType : allAuthTypes) {
             var annotation = AnnotationHelper.getAnnotation(allAuthType, DbTypes.class);
             if (annotation.isPresent()) {
                 var types = annotation.get().types();
                 if (Arrays.stream(types).anyMatch(t -> t == type)) {
-                    authTypes.add(allAuthType);
+                    authTypes.add(new DbAuthDto(allAuthType));
                 }
             }
         }
 
         if (!authTypes.isEmpty()) {
+
             authType.setItems(FXCollections.observableArrayList(authTypes));
             authType.setValue(authTypes.getFirst());
         }
@@ -98,17 +101,20 @@ public class ConnectController {
 
     @FXML
     protected void selectAuthType() {
-        loginAndPassBlock.setVisible(authType.getValue() == DbAuthenticationType.LoginAndPassword);
+        var value = authType.getValue();
+        if (value != null) {
+            loginAndPassBlock.setVisible(authType.getValue().getType() == DbAuthenticationType.LoginAndPassword);
+        }
     }
 
     @FXML
     protected void setSetting() {
         dbSetting.setName(name.getText());
-        dbSetting.setDbType(dbType.getValue());
+        dbSetting.setDbType(dbType.getValue().getType());
         dbSetting.setHost(host.getText());
         dbSetting.setInstance(instance.getText());
         dbSetting.setPort(port.getText());
-        dbSetting.setAuthType(authType.getValue());
+        dbSetting.setAuthType(authType.getValue().getType());
         dbSetting.setLogin(login.getText());
         dbSetting.setPassword(password.getText());
         dbSetting.setUrl(Driver.getUrl(dbSetting, null));
@@ -130,16 +136,17 @@ public class ConnectController {
 
     @FXML
     public void initialize() {
-        this.stage = new Stage();
-        stage.setScene(new Scene(connectWindow));
-        stage.setResizable(false);
-
         try {
-            var types = DbType.values();
+            var types = Arrays.asList(DbType.values()).stream().map(x->new DbTypeDto(x)).toList();
             dbType.setItems(FXCollections.observableArrayList(types));
-            dbType.setValue(types[0]);
+            dbType.setValue(types.getFirst());
 
             selectBaseType();
+
+            this.stage = new Stage();
+            stage.setScene(new Scene(connectWindow));
+            stage.setResizable(false);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -159,6 +166,7 @@ public class ConnectController {
 
     @FXML
     protected void onCancel() {
+        Stage stage = (Stage) authType.getScene().getWindow();
         stage.close();
     }
 }

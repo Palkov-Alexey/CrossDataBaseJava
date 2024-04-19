@@ -6,6 +6,7 @@ target/
 data/
 mvnw/
 jre/
+*.log
 
 ### STS ###
 .apt_generated
