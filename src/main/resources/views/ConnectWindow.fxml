@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="connectWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.crossdatabase.controllers.ConnectController">
+    <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="105.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="342.0" minWidth="10.0" prefWidth="342.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="43.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.0" minWidth="10.0" prefWidth="109.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="132.0" minWidth="10.0" prefWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <children>
+            <Label text="Name:" GridPane.columnIndex="1" />
+            <TextField fx:id="name" GridPane.columnIndex="2" />
+            <Label text="Type:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ChoiceBox fx:id="dbType" onAction="#selectBaseType" prefHeight="25.0" prefWidth="353.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="Host:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <TextField fx:id="host" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label text="Port:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <TextField fx:id="port" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+         <Label text="Instance" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+         <TextField fx:id="instance" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label text="Authentication:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <ChoiceBox fx:id="authType" onAction="#selectAuthType" prefHeight="25.0" prefWidth="505.0" GridPane.columnIndex="2" GridPane.columnSpan="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" />
+        </children>
+    </GridPane>
+    <GridPane fx:id="loginAndPassBlock" prefWidth="600.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="105.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="342.0" minWidth="10.0" prefWidth="342.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="342.0" minWidth="10.0" prefWidth="43.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="512.0" minWidth="10.0" prefWidth="109.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <children>
+            <Label text="Login:" GridPane.columnIndex="1" />
+            <TextField fx:id="login" GridPane.columnIndex="2" />
+            <Label text="Password:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         <PasswordField fx:id="password" promptText="&lt;hidden&gt;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+        </children>
+    </GridPane>
+    <HBox alignment="CENTER_LEFT">
+        <children>
+            <Button mnemonicParsing="false" onAction="#test" text="Test" />
+         <Label fx:id="testText">
+            <HBox.margin>
+               <Insets left="10.0" />
+            </HBox.margin></Label>
+        </children>
+    </HBox>
+   <HBox alignment="CENTER_RIGHT" layoutX="15.0" layoutY="195.0">
+      <children>
+         <Button mnemonicParsing="false" onAction="#onSave" text="Save" />
+         <Button mnemonicParsing="false" onAction="#onCancel" text="Cancel" />
+      </children>
+   </HBox>
+   <padding>
+      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   </padding>
+</VBox>
